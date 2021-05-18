@@ -1,0 +1,22 @@
+---
+#               _ _      __      _       __     ___            _        
+#  _ __ ___  __| (_)___ / /_ __ | | ____ \ \   / / |_ __ _ ___| | _____ 
+# | '__/ _ \/ _` | / __| || '_ \| |/ / _` | | / /| __/ _` / __| |/ / __|
+# | | |  __/ (_| | \__ \ || |_) |   < (_| | |/ / | || (_| \__ \   <\__ \
+# |_|  \___|\__,_|_|___/ || .__/|_|\_\__, | /_/   \__\__,_|___/_|\_\___/
+#                       \_\_|        |___/_/                            
+# make-config
+- block:
+  - name: make-config | RedHat | {{ redis.configroot }}/redis*.conf should be deployed
+    notify: restart Redis
+    template:
+      src:   "etc/{{ item }}.j2"
+      dest:  "/{{ redis.configroot }}/{{ item }}"
+      mode:  "0640"
+      owner: "{{ redis.user.username }}"
+      group: "root"
+    with_items:
+      - "redis.conf"
+      - "redis-sentinel.conf"
+  when: ansible_os_family == "RedHat"
+

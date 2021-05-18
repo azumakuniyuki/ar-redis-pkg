@@ -1,0 +1,32 @@
+---
+#               _ _      __      _       __     ___            _        
+#  _ __ ___  __| (_)___ / /_ __ | | ____ \ \   / / |_ __ _ ___| | _____ 
+# | '__/ _ \/ _` | / __| || '_ \| |/ / _` | | / /| __/ _` / __| |/ / __|
+# | | |  __/ (_| | \__ \ || |_) |   < (_| | |/ / | || (_| \__ \   <\__ \
+# |_|  \___|\__,_|_|___/ || .__/|_|\_\__, | /_/   \__\__,_|___/_|\_\___/
+#                       \_\_|        |___/_/                            
+# install-pkg
+- block:
+    - name: install-pkg | Amazon | redis{{ redis.version }} repository should be enabled
+      when: ansible_distribution == "Amazon"
+      shell: >
+        amazon-linux-extras list
+        |  grep redis{{ redis.version }}
+        |  grep enabled 
+        || amazon-linux-extras enable redis{{ redis.version}}
+      changed_when: false
+
+    - name: install-pkg | RedHat | Redis should be installed
+      yum:
+        name:  "redis"
+        state: "present"
+
+    - name: install-pkg | RedHat | Redis related packages should be installed
+      yum:
+        name:  "{{ item }}"
+        state: "present"
+      with_items:
+        - "redis-devel"
+        - "redis-doc"
+  when: ansible_os_family == "RedHat"
+
