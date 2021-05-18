@@ -8,7 +8,7 @@
 # make-config
 - block:
   - name: make-config | RedHat | {{ redis.configroot }}/redis*.conf should be deployed
-    notify: restart Redis
+    notify: Restart Redis
     template:
       src:   "etc/{{ item }}.j2"
       dest:  "/{{ redis.configroot }}/{{ item }}"
